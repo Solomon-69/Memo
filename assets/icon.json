@@ -1,0 +1,7 @@
+{
+  "fill" : { "solid" : "srgb:0.047,0.102,0.302,1.00000" },
+  "fill-specializations" : [ { "appearance" : "dark", "value" : { "solid" : "srgb:0.020,0.027,0.059,1.00000" } } ],
+  "groups" : [ { "layers" : [ { "image-name" : "art-light.png", "name" : "art",
+      "image-name-specializations" : [ { "appearance" : "dark", "value" : "art-dark.png" } ] } ] } ],
+  "supported-platforms" : { "squares" : "shared" }
+}

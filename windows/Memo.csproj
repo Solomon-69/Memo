@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Memo</RootNamespace>
+    <AssemblyName>Memo</AssemblyName>
+    <ApplicationIcon>assets\Memo.ico</ApplicationIcon>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationVisualStyles>true</ApplicationVisualStyles>
+
+    <Product>Memo</Product>
+    <Description>Everything you copy, one shortcut away</Description>
+    <Company>Solomon</Company>
+    <Copyright>Copyright (c) 2026 Solomon</Copyright>
+    <Version>1.1.0</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <!-- One self-contained Memo.exe (no .NET install needed). -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="assets\Memo.ico" />
+  </ItemGroup>
+
+</Project>

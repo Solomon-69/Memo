@@ -1,0 +1,11 @@
+.DS_Store
+*.dmg
+*.zip
+.signing
+shots/
+.preview.html
+
+# Windows build
+windows/bin/
+windows/obj/
+out/
