@@ -1,15 +1,14 @@
 # Download checksums (SHA-256)
 
-Fingerprints of the current release downloads. If a file you downloaded gives a different fingerprint, do not open it.
+Fingerprints of the current release downloads (Memo 1.2). If a file you downloaded gives a different fingerprint, do not open it.
 
 ```
-41df5c8f62660687a4e35e898a9c079866b01893ec6e432847997c55e2734b7d  Memo-mac.zip
+6f4f832f4d2cf466cd045c4945146e9b18345b42246f8b37935ceb525b93ec04  Memo-mac.zip
+f6d030c5d0f2d7ce5cdb2b7c93a5d31724f0798c994c4dcb06363cb2ce8b02fa  Memo-windows.zip
 ```
 
 Check on Mac: `shasum -a 256 <file>`. Check on Windows: `certutil -hashfile <file> SHA256`.
 
-Release: v1.1 (Memo-mac.zip). There is no Windows download yet.
-
-Version 1.1.1 is the current version. Its downloads have not been published yet, so the fingerprints above belong to the last published build (1.1). New fingerprints are added here when 1.1.1 is released.
+Release: [v1.2](https://github.com/Solomon-69/Memo/releases/tag/v1.2) (Memo-mac.zip, Memo-windows.zip). The same fingerprints are on the release page.
 
 The apps are not signed yet; see the "Unsigned apps" section of the README.
