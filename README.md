@@ -10,7 +10,7 @@
 **Everything you copy, one shortcut away.**
 
 <p>
-  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Version 1.1.1" src="https://img.shields.io/badge/version-1.1.1-3457c9?style=flat-square"></a>
+  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Version 1.2" src="https://img.shields.io/badge/version-1.2-3457c9?style=flat-square"></a>
   <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-1f1d1a?style=flat-square&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-5b8a5a?style=flat-square"></a>
   <img alt="No data collected" src="https://img.shields.io/badge/data%20collected-none-3457c9?style=flat-square">
@@ -116,7 +116,7 @@ small tick each time something is copied.
   <img src="docs/intro/memo-welcome-3.png" width="270" alt="Memo welcome, page three">
 </p>
 
-Version 1.1.1 has a new three-page welcome with a frosted glass panel. Each page plays its animation once. The download buttons give the last published build (1.1); the newest version is published when its builds are ready.
+Version 1.2 has a new three-page welcome with a frosted glass panel. Each page plays its animation once.
 
 ## Install
 
