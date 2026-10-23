@@ -11,7 +11,7 @@
 <meta property="og:title" content="Memo">
 <meta property="og:description" content="Everything you copy, one shortcut away. Free for Mac.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="showcase/memo-1-light.png">
+<meta property="og:image" content="showcase/memo-og.png">
 <link rel="icon" type="image/png" href="img/icon-light.png">
 <link rel="apple-touch-icon" href="img/icon-light.png">
 <style>
@@ -201,6 +201,8 @@
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     .js .reveal { opacity: 1; transform: none; }
   }
+  /* showcase pictures fade softly into the page (edges are feathered in the image itself) */
+  img[src*="showcase/"] { border-radius: 0 !important; box-shadow: none !important; }
 </style>
 </head>
 <body>
