@@ -83,7 +83,7 @@ struct PopoverView: View {
                     .buttonStyle(.plain)
                     .help("Clear search")
             } else if let s = model.shortcut {
-                Text(s.display).font(.system(size: 11)).foregroundStyle(.tertiary)
+                Text(s.display).font(.system(size: 11)).foregroundStyle(.secondary)
             }
         }
         .font(.system(size: 13))

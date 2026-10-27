@@ -12,7 +12,7 @@ internal sealed record Palette(bool Dark, Color Back, Color Card, Color Field, C
         var a = Settings.Accents[Math.Clamp(accentIndex, 0, Settings.Accents.Length - 1)];
         return dark
             ? new Palette(true, C(0x17181C), C(0x202228), C(0x2A2C33), C(0xF1F2F5), C(0x9A9EA8), C(0x30333A), C(0x2A2D35), a.Dark)
-            : new Palette(false, C(0xF5F6F8), C(0xFFFFFF), C(0xE9EBEF), C(0x16181D), C(0x6A6F7B), C(0xDCDFE5), C(0xECEEF2), a.Light);
+            : new Palette(false, C(0xF5F6F8), C(0xFFFFFF), C(0xE9EBEF), C(0x16181D), C(0x646874), C(0xDCDFE5), C(0xECEEF2), a.Light);
     }
 
     private static Color C(int v) => Color.FromArgb((v >> 16) & 255, (v >> 8) & 255, v & 255);

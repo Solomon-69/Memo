@@ -148,7 +148,7 @@ struct IntroView: View {
             .cardStyle()
             .animation(.spring(response: 0.4, dampingFraction: 0.75), value: model.accessibilityOK)
             .introRise(3, shown)
-            Text("You can change this any time in Memo's Settings.").font(.system(size: 11)).foregroundStyle(.tertiary)
+            Text("You can change this any time in Memo's Settings.").font(.system(size: 11)).foregroundStyle(.secondary)
                 .introRise(4, shown)
         }
         .frame(maxWidth: .infinity)
