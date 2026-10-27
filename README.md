@@ -10,7 +10,7 @@
 **Everything you copy, one shortcut away.**
 
 <p>
-  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Version 1.2" src="https://img.shields.io/badge/version-1.2-3457c9?style=flat-square"></a>
+  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Version 1.1.1" src="https://img.shields.io/badge/version-1.1.1-3457c9?style=flat-square"></a>
   <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-1f1d1a?style=flat-square&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-5b8a5a?style=flat-square"></a>
   <img alt="No data collected" src="https://img.shields.io/badge/data%20collected-none-3457c9?style=flat-square">
@@ -37,8 +37,8 @@ Memo is a clipboard history for the Mac menu bar. Everything you copy (text, lin
 files and colours) is kept in a tidy list. Press <kbd>⌃</kbd> <kbd>⌘</kbd> <kbd>V</kbd>
 anywhere, pick something and it is pasted straight back into the app you are using.
 
-It is written from scratch, inspired by other Mac clipboard managers and built to fix the things people most often ask
-such tools for. It is free, open source, and nothing you copy ever leaves your Mac.
+It is written from scratch, inspired by Maccy and built to fix the things people most often ask
+Maccy for. It is free, open source, and nothing you copy ever leaves your Mac.
 
 ## Contents
 
@@ -107,16 +107,6 @@ you decide what goes into it.
 
 **Also:** eight app colours, open at login, light and dark mode, and a menu bar icon that shows a
 small tick each time something is copied.
-
-## Welcome window
-
-<p align="center">
-  <img src="docs/intro/memo-welcome-1.png" width="270" alt="Memo welcome, page one">
-  <img src="docs/intro/memo-welcome-2.png" width="270" alt="Memo welcome, page two">
-  <img src="docs/intro/memo-welcome-3.png" width="270" alt="Memo welcome, page three">
-</p>
-
-Version 1.2 has a new three-page welcome with a frosted glass panel. Each page plays its animation once.
 
 ## Install
 
@@ -188,17 +178,4 @@ Screenshots of every screen, rendered off-screen in light and dark: `QA/snap.sh`
 
 ## Licence
 
-[MIT](LICENSE). Memo shares no code with other clipboard managers. See [THIRD_PARTY.md](THIRD_PARTY.md).
-
-## Unsigned apps: how to open them, and how to check your download
-
-These apps are not signed yet. Signing needs Apple's paid developer account (and a Windows code-signing certificate), which the project does not have yet. The apps are safe to use as far as the author knows, but your computer cannot prove who made them, so it warns you the first time.
-
-- **Mac:** right-click the app, choose **Open**, then **Open** again. If there is no Open button, go to System Settings > Privacy & Security and click **Open Anyway**.
-- **Windows:** if SmartScreen says "Windows protected your PC", click **More info**, then **Run anyway**.
-
-To check that a download has not been changed, compare its SHA-256 fingerprint with the one in [CHECKSUMS.md](CHECKSUMS.md) (Mac: `shasum -a 256 <file>` in Terminal; Windows: `certutil -hashfile <file> SHA256`).
-
-## Trademarks
-
-Memo is an independent project, not affiliated with or endorsed by the makers of any other clipboard manager. All trademarks belong to their owners.
+[MIT](LICENSE). Memo shares no code with Maccy.

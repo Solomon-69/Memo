@@ -2,7 +2,7 @@
 //
 // Uses the system hot key service (works in every app, needs no permission). Registration
 // failures are reported back, so the recorder can say "taken by another app" instead of
-// silently doing nothing (common clipboard-manager issue: shortcut recorder problems).
+// silently doing nothing (Maccy issue: shortcut recorder problems).
 import AppKit
 import Carbon.HIToolbox
 

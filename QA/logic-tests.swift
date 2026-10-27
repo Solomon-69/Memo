@@ -22,8 +22,8 @@ enum Tests {
         check(ColorText.isColor("rgb(10, 20, 30)") && ColorText.isColor("rgba(1,2,3,0.5)"), "rgb colours")
         check(!ColorText.isColor("#zzz") && !ColorText.isColor("123456") && !ColorText.isColor("rgb(300,1,1)"), "not colours")
         // Fuzzy
-        check(Fuzzy.score("exa", in: "hello@example.com") != nil, "substring match")
-        check(Fuzzy.score("exa", in: "A very long piece of copied text that should never overflow the row or push the number") == nil, "no scattered match")
+        check(Fuzzy.score("lun", in: "hello@lunashift.app") != nil, "substring match")
+        check(Fuzzy.score("lun", in: "A very long piece of copied text that should never overflow the row or push the number") == nil, "no scattered match")
         check(Fuzzy.score("rpt", in: "Report.pdf") != nil, "letters in order")
         check((Fuzzy.score("rep", in: "Report") ?? 0) > (Fuzzy.score("rep", in: "a report") ?? 0), "start ranks higher")
         check(Fuzzy.score("zzz", in: "Report") == nil, "no match")

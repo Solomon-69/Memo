@@ -10,7 +10,7 @@ namespace Memo;
 internal sealed class SelfTest
 {
     public const string LongText =
-        "Memo self-test alpha: a longer note that wraps over several lines, so the open row shows every single word. " +
+        "Notes from Thursday: a longer note that wraps over several lines, so the open row shows every single word. " +
         "Second sentence about a meeting on Thursday at ten, with the agenda, the budget and the new launch plan. " +
         "Third sentence to make sure the text is long enough to need the whole row.";
 
@@ -151,11 +151,11 @@ internal sealed class SelfTest
         r["imageCaptured"] = await WaitFor(() => store.Items.Any(i => i.Kind == Kind.Image && i.Width == 80 && i.Height == 60));
         r["imageSavedToDisk"] = Directory.Exists(Store.ImagesFolder) && Directory.GetFiles(Store.ImagesFolder, "*.png").Length >= 1;
 
-        var tmp = Path.Combine(Path.GetTempPath(), "memo-selftest-file.txt");
+        var tmp = Path.Combine(Path.GetTempPath(), "shopping-list.txt");
         File.WriteAllText(tmp, "memo");
         var sc = new System.Collections.Specialized.StringCollection { tmp };
         Retry(() => Clipboard.SetFileDropList(sc));
-        r["filesCaptured"] = await WaitFor(() => store.Items.Any(i => i.Kind == Kind.Files && i.Text.Contains("memo-selftest-file")));
+        r["filesCaptured"] = await WaitFor(() => store.Items.Any(i => i.Kind == Kind.Files && i.Text.Contains("shopping-list")));
 
         // A secret (marked the way password managers do) must be skipped.
         var secret = new DataObject();
@@ -175,7 +175,7 @@ internal sealed class SelfTest
         // Pin, search, delete.
         if (alpha != null) store.TogglePin(alpha);
         r["pinnedFirst"] = alpha != null && store.Search("").FirstOrDefault()?.Id == alpha.Id && alpha.Pinned;
-        r["searchFinds"] = store.Search("alpha").Count == 1 && store.Search("qqnomatchqq").Count == 0;
+        r["searchFinds"] = store.Search("Thursday").Count == 1 && store.Search("qqnomatchqq").Count == 0;
         var link = store.Items.FirstOrDefault(i => i.Text == "https://example.com/page?id=5");
         var before = store.Items.Count;
         if (link != null) store.Delete(link);

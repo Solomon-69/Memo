@@ -1,5 +1,5 @@
 // Model.swift. What the popover and Settings show. Every setting saves the moment it changes
-// (common clipboard-manager issue: settings fields reset when you click away).
+// (Maccy issue: settings fields reset when you click away).
 import AppKit
 import SwiftUI
 

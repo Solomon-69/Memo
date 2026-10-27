@@ -18,7 +18,7 @@ enum Snap {
                      pinned: pinned, pinOrder: order, bytes: 100, cleaned: cleaned)
         }
         let sample: [ClipItem] = [
-            item(1, .text, "hello@example.com", ago: 9000, pinned: true, order: 0, src: "Mail"),
+            item(1, .text, "hello@lunashift.app", ago: 9000, pinned: true, order: 0, src: "Mail"),
             item(2, .text, "Thanks so much for getting back to me about the partnership, here are the details.\n\nThe app is live on the App Store this week. You get a free year, and your followers get a 7-day trial through your own link.\n\nPosting once a week is all we ask. Tell me which days suit you and I will send the links and a short guide.\n\nSpeak soon,\nSolomon", ago: 4000, pinned: true, order: 1, src: "Notes"),
             item(3, .link, "https://apps.apple.com/app/luna-shift/id6809570772", ago: 20, cleaned: true),
             item(4, .image, "", ago: 140, src: "Screenshot", w: 1440, h: 900),

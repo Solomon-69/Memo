@@ -1,6 +1,6 @@
 // Clipboard.swift. Watching the clipboard, pasting back, cleaning links, Markdown.
 //
-// Crash safety (common clipboard-manager issue: crashes on copy/paste in some apps): every read is optional,
+// Crash safety (Maccy issue: crashes on copy/paste in some apps): every read is optional,
 // sizes are capped, nothing is force-unwrapped, and all work happens on the main thread.
 import AppKit
 import ApplicationServices

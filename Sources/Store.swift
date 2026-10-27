@@ -1,6 +1,6 @@
 // Store.swift. Memo history storage: one SQLite file for the list, plus image files on disk.
 //
-// Fixes for common clipboard-manager storage bugs:
+// Fixes for Maccy's storage bugs:
 // - Every image file belongs to exactly one row. Rows whose file is missing and files with no row
 //   are swept at launch and after each clean-up, so the store can never balloon with orphans.
 // - A hard size cap (and age / count limits) is enforced after every new item.
