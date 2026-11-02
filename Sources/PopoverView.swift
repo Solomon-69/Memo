@@ -244,7 +244,7 @@ struct ClipRow: View {
 
     /// The one-line summary. Clicking it pastes; the chevron opens the full text instead.
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             tile
             VStack(alignment: .leading, spacing: 2) {
                 // A made-up label is shown in full (it wraps); a copied line still shortens with "...".
@@ -259,6 +259,7 @@ struct ClipRow: View {
                 .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 4) {
             HStack(spacing: 0) {   // all four buttons always show, so nothing moves on hover
                 copyButton
                 pinButton
@@ -270,6 +271,7 @@ struct ClipRow: View {
                     .foregroundStyle(selected ? accent : Color.secondary)
                     .frame(width: 18, height: 18)
                     .background(RoundedRectangle(cornerRadius: 5).strokeBorder(Color.primary.opacity(0.12)))
+            }
             }
         }
         .contentShape(Rectangle())
@@ -291,7 +293,7 @@ struct ClipRow: View {
                 .font(.system(size: 11, weight: copied ? .bold : .regular))
                 .foregroundStyle(copied ? accent : Color.secondary)
                 .contentTransition(.symbolEffect(.replace))
-                .frame(width: 22, height: 22)
+                .frame(width: 20, height: 22)
                 .contentShape(Rectangle())
         }
         .buttonStyle(RowIconButtonStyle())
@@ -307,7 +309,7 @@ struct ClipRow: View {
                 .foregroundStyle(item.pinned ? accent : Color.secondary)
                 .rotationEffect(.degrees(item.pinned ? 0 : 45))
                 .contentTransition(.symbolEffect(.replace))
-                .frame(width: 22, height: 22)
+                .frame(width: 20, height: 22)
                 .contentShape(Rectangle())
         }
         .buttonStyle(RowIconButtonStyle())
