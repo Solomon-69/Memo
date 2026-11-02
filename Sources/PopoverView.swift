@@ -248,19 +248,11 @@ struct ClipRow: View {
             tile
             VStack(alignment: .leading, spacing: 2) {
                 Text(ClipText.title(item)).font(.system(size: 13)).lineLimit(1).truncationMode(.tail)
-                // The age never gets cut: only the kind/app part in front of it shortens.
-                HStack(spacing: 0) {
-                    Text(ClipText.subtitle(item, withAge: false)).lineLimit(1).truncationMode(.tail)
-                    Text(" · " + ClipText.ago(item.used)).lineLimit(1).fixedSize()
-                }
-                .font(.system(size: 11)).foregroundStyle(.secondary)
+                // Nothing here is ever cut: if the details are long they wrap onto a second line.
+                Text(ClipText.subtitle(item)).font(.system(size: 11)).foregroundStyle(.secondary)
+                    .lineLimit(2).fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            if item.kind == .image, let name = item.image, let thumb = Store.shared.thumbnail(name) {
-                Image(nsImage: thumb).resizable().aspectRatio(contentMode: .fill)
-                    .frame(width: 44, height: 30).clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).strokeBorder(Color.primary.opacity(0.1)))
-            }
             HStack(spacing: 0) {   // all four buttons always show, so nothing moves on hover
                 copyButton
                 pinButton
@@ -357,6 +349,11 @@ struct ClipRow: View {
             RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Color(nsColor: c))
                 .frame(width: 28, height: 28)
                 .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.15)))
+        } else if item.kind == .image, let name = item.image, let thumb = Store.shared.thumbnail(name) {
+            // The picture itself takes the icon's place, so it no longer eats into the text.
+            Image(nsImage: thumb).resizable().aspectRatio(contentMode: .fill)
+                .frame(width: 28, height: 28).clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.12)))
         } else {
             IconTile(symbol: ClipText.symbol(item.kind), size: 28)
         }
