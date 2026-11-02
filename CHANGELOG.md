@@ -1,6 +1,8 @@
 # Changelog
 
 ## 1.3
+- Short labels for long text, links and pictures, made on your Mac (Apple on-device model and Vision), with a Settings switch.
+- Row buttons stay in place and only fade, so rows no longer jiggle when you hover; the age is never cut off; row details wrap.
 - Small grey text is darker and easier to read in light and dark.
 
 ## 1.1.1
