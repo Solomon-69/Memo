@@ -236,9 +236,10 @@ struct ClipRow: View {
             if h, model.mouseMovedSinceOpen() { model.selectedID = item.id }
         }
         .contextMenu { menuItems }
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: selected)
+        .animation(.easeOut(duration: 0.14), value: selected)
+        .animation(.easeOut(duration: 0.14), value: hover)
         .animation(.spring(response: 0.3, dampingFraction: 0.75), value: item.pinned)
-        .animation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.84), value: expanded)
+        .animation(reduceMotion ? nil : .spring(response: 0.38, dampingFraction: 0.96), value: expanded)
     }
 
     /// The one-line summary. Clicking it pastes; the chevron opens the full text instead.
@@ -257,8 +258,13 @@ struct ClipRow: View {
             }
             copyButton
             pinButton
-            if selected || hover { moreMenu }
-            if selected || hover || expanded { expandButton }
+            // These two always keep their space and only fade, so nothing in the row moves or re-truncates on hover.
+            moreMenu
+                .opacity(selected || hover ? 1 : 0)
+                .allowsHitTesting(selected || hover)
+            expandButton
+                .opacity(selected || hover || expanded ? 1 : 0)
+                .allowsHitTesting(selected || hover || expanded)
             if let number {
                 Text("\(number)").font(.system(size: 11, weight: .medium)).monospacedDigit()
                     .foregroundStyle(selected ? accent : Color.secondary)
