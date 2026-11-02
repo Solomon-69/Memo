@@ -15,7 +15,8 @@ enum Snap {
                   src: String? = "Safari", cleaned: Bool = false, w: Int = 0, h: Int = 0) -> ClipItem {
             ClipItem(id: id, kind: k, text: t, html: nil, image: nil, width: w, height: h, source: src,
                      created: now.addingTimeInterval(-ago), used: now.addingTimeInterval(-ago),
-                     pinned: pinned, pinOrder: order, bytes: 100, cleaned: cleaned)
+                     pinned: pinned, pinOrder: order, bytes: 100, cleaned: cleaned,
+                     summary: id == 2 ? "Partnership details: free year, weekly posting, App Store link" : id == 4 ? "Screenshot of a long chat log about the Memo app" : nil)
         }
         let sample: [ClipItem] = [
             item(1, .text, "hello@lunashift.app", ago: 9000, pinned: true, order: 0, src: "Mail"),

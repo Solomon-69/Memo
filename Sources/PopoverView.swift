@@ -247,10 +247,16 @@ struct ClipRow: View {
         HStack(spacing: 10) {
             tile
             VStack(alignment: .leading, spacing: 2) {
-                Text(ClipText.title(item)).font(.system(size: 13)).lineLimit(1).truncationMode(.tail)
-                // Nothing here is ever cut: if the details are long they wrap onto a second line.
-                Text(ClipText.subtitle(item)).font(.system(size: 11)).foregroundStyle(.secondary)
-                    .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                // A made-up label is shown in full (it wraps); a copied line still shortens with "...".
+                Text(ClipText.title(item)).font(.system(size: 13))
+                    .lineLimit(ClipText.hasLabel(item) ? 3 : 1).truncationMode(.tail)
+                    .fixedSize(horizontal: false, vertical: true)
+                // Nothing here is ever cut: details wrap, and the age sits on its own line underneath.
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(ClipText.subtitle(item, withAge: false)).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                    Text(ClipText.ago(item.used))
+                }
+                .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 0) {   // all four buttons always show, so nothing moves on hover
@@ -468,8 +474,13 @@ enum ClipText {
         }
     }
 
+    static func hasLabel(_ item: ClipItem) -> Bool {
+        if let s = item.summary, !s.isEmpty, Describer.wantsLabel(item) { return true }
+        return false
+    }
+
     static func title(_ item: ClipItem) -> String {
-        if let s = item.summary, !s.isEmpty, Describer.wantsLabel(item) { return s }
+        if hasLabel(item), let s = item.summary { return s }
         switch item.kind {
         case .image: return "Image \(item.width) × \(item.height)"
         case .file:
