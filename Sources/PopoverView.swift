@@ -248,7 +248,12 @@ struct ClipRow: View {
             tile
             VStack(alignment: .leading, spacing: 2) {
                 Text(ClipText.title(item)).font(.system(size: 13)).lineLimit(1).truncationMode(.tail)
-                Text(ClipText.subtitle(item)).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                // The age never gets cut: only the kind/app part in front of it shortens.
+                HStack(spacing: 0) {
+                    Text(ClipText.subtitle(item, withAge: false)).lineLimit(1).truncationMode(.tail)
+                    Text(" · " + ClipText.ago(item.used)).lineLimit(1).fixedSize()
+                }
+                .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if item.kind == .image, let name = item.image, let thumb = Store.shared.thumbnail(name) {
@@ -256,15 +261,12 @@ struct ClipRow: View {
                     .frame(width: 44, height: 30).clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).strokeBorder(Color.primary.opacity(0.1)))
             }
-            copyButton
-            pinButton
-            // These two always keep their space and only fade, so nothing in the row moves or re-truncates on hover.
-            moreMenu
-                .opacity(selected || hover ? 1 : 0)
-                .allowsHitTesting(selected || hover)
-            expandButton
-                .opacity(selected || hover || expanded ? 1 : 0)
-                .allowsHitTesting(selected || hover || expanded)
+            HStack(spacing: 0) {   // all four buttons always show, so nothing moves on hover
+                copyButton
+                pinButton
+                moreMenu
+                expandButton
+            }
             if let number {
                 Text("\(number)").font(.system(size: 11, weight: .medium)).monospacedDigit()
                     .foregroundStyle(selected ? accent : Color.secondary)
@@ -488,7 +490,7 @@ enum ClipText {
         }
     }
 
-    static func subtitle(_ item: ClipItem) -> String {
+    static func subtitle(_ item: ClipItem, withAge: Bool = true) -> String {
         var parts = [item.kind.label]
         if item.kind == .text {
             let lines = item.text.split(whereSeparator: \.isNewline).count
@@ -496,7 +498,7 @@ enum ClipText {
         }
         if item.cleaned { parts.append("tracking removed") }
         if let s = item.source, !s.isEmpty { parts.append(s) }
-        parts.append(ago(item.used))
+        if withAge { parts.append(ago(item.used)) }
         return parts.joined(separator: " · ")
     }
 
