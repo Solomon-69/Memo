@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3
 - Small grey text is darker and easier to read in light and dark.
 
 ## 1.1.1
