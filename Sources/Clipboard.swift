@@ -153,7 +153,8 @@ enum Paster {
     }
 
     /// Presses Command-V in the app in front.
-    static func pressPaste() {
+    /// ⌘V to the app you were in. With a target it goes straight to that app even if Memo holds the keyboard.
+    static func pressPaste(to app: NSRunningApplication? = nil) {
         guard canPasteDirectly else { return }
         let src = CGEventSource(stateID: .combinedSessionState)
         let vKey: CGKeyCode = 9
@@ -161,8 +162,13 @@ enum Paster {
         let up = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: false)
         down?.flags = .maskCommand
         up?.flags = .maskCommand
-        down?.post(tap: .cgSessionEventTap)
-        up?.post(tap: .cgSessionEventTap)
+        if let app, app.bundleIdentifier != Bundle.main.bundleIdentifier {
+            down?.postToPid(app.processIdentifier)
+            up?.postToPid(app.processIdentifier)
+        } else {
+            down?.post(tap: .cgSessionEventTap)
+            up?.post(tap: .cgSessionEventTap)
+        }
     }
 }
 

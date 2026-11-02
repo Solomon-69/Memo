@@ -78,6 +78,10 @@ struct SettingsView: View {
                                subtitle: "Removes tracking bits like utm_source and fbclid") {
                         SmoothSwitch(isOn: model.cleanLinks, title: "Clean links", tint: accent) { model.cleanLinks = $0 }
                     }
+                    SettingRow(symbol: "command", title: "Keep open after ⌘1–9",
+                               subtitle: "Paste several items in a row. Esc or a click outside closes it") {
+                        SmoothSwitch(isOn: model.keepOpenAfterNumber, title: "Keep open after number shortcuts", tint: accent) { model.keepOpenAfterNumber = $0 }
+                    }
                     SettingRow(symbol: "sparkles", title: "Describe long items",
                                subtitle: Describer.modelReady
                                 ? "Short labels for long text, links and pictures. Made on this Mac, nothing is sent anywhere"

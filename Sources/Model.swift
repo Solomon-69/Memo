@@ -10,6 +10,7 @@ enum Pref {
     static let skipSecrets = "skipSecrets"
     static let cleanLinks = "cleanLinks"
     static let describeItems = "describeItems"
+    static let keepOpenAfterNumber = "keepOpenAfterNumber"
     static let pasteDirectly = "pasteDirectly"
     static let paused = "paused"
     static let ignored = "ignoredApps"          // [bundle id]
@@ -45,6 +46,7 @@ final class TenaxModel: ObservableObject {
     @Published var skipSecrets: Bool { didSet { save(skipSecrets, Pref.skipSecrets) } }
     @Published var cleanLinks: Bool { didSet { save(cleanLinks, Pref.cleanLinks) } }
     @Published var describeItems: Bool { didSet { save(describeItems, Pref.describeItems) } }
+    @Published var keepOpenAfterNumber: Bool { didSet { save(keepOpenAfterNumber, Pref.keepOpenAfterNumber) } }
     @Published var pasteDirectly: Bool { didSet { save(pasteDirectly, Pref.pasteDirectly) } }
     @Published var paused: Bool { didSet { save(paused, Pref.paused) } }
     @Published var ignored: [IgnoredApp] { didSet { saveIgnored() } }
@@ -55,6 +57,8 @@ final class TenaxModel: ObservableObject {
 
     // Actions (wired by AppDelegate)
     var onPaste: (ClipItem, PasteStyle) -> Void = { _, _ in }
+    /// ⌘1–9: pastes and, if the setting is on, leaves the panel open for the next one.
+    var onQuickPaste: (ClipItem) -> Void = { _ in }
     var onLoadFull: (ClipItem) -> ClipItem = { $0 }   // the list only holds the first 4,000 characters
     var onPin: (ClipItem) -> Void = { _ in }
     var onDelete: (ClipItem) -> Void = { _ in }
@@ -70,13 +74,14 @@ final class TenaxModel: ObservableObject {
     init() {
         let d = UserDefaults.standard
         d.register(defaults: [Pref.keepDays: 30, Pref.maxItems: 500, Pref.maxMB: 250, Pref.skipSecrets: true,
-                              Pref.cleanLinks: true, Pref.describeItems: true, Pref.pasteDirectly: true, Pref.paused: false])
+                              Pref.cleanLinks: true, Pref.describeItems: true, Pref.keepOpenAfterNumber: true, Pref.pasteDirectly: true, Pref.paused: false])
         keepDays = d.integer(forKey: Pref.keepDays)
         maxItems = d.integer(forKey: Pref.maxItems)
         maxMB = d.integer(forKey: Pref.maxMB)
         skipSecrets = d.bool(forKey: Pref.skipSecrets)
         cleanLinks = d.bool(forKey: Pref.cleanLinks)
         describeItems = d.bool(forKey: Pref.describeItems)
+        keepOpenAfterNumber = d.bool(forKey: Pref.keepOpenAfterNumber)
         pasteDirectly = d.bool(forKey: Pref.pasteDirectly)
         paused = d.bool(forKey: Pref.paused)
         accentIndex = d.integer(forKey: Pref.accent)
@@ -162,7 +167,7 @@ final class TenaxModel: ObservableObject {
     /// Quick paste: 1 = first item shown.
     func paste(number n: Int) {
         guard n >= 1, n <= min(9, visible.count) else { return }
-        onPaste(visible[n - 1], .normal)
+        if keepOpenAfterNumber { onQuickPaste(visible[n - 1]) } else { onPaste(visible[n - 1], .normal) }
     }
 
     func mouseMovedSinceOpen() -> Bool {

@@ -96,6 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private func wireModel() {
         model.launchAtLogin = SMAppService.mainApp.status == .enabled
         model.onPaste = { [weak self] item, style in self?.paste(item, style: style) }
+        model.onQuickPaste = { [weak self] item in self?.paste(item, style: .normal, keepOpen: true) }
         model.onLoadFull = { [weak self] item in self?.store.full(item) ?? item }
         model.onPin = { [weak self] item in
             self?.store.setPinned(item.id, !item.pinned); self?.reload()
@@ -181,9 +182,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         Log.write("copy \(shown.kind.rawValue)")
     }
 
-    private func paste(_ shown: ClipItem, style: PasteStyle) {
+    /// Items pasted while the panel stayed open. They move to the top only when it closes,
+    /// so the numbers do not shift between two ⌘-number presses.
+    private var usedWhileOpen: [Int64] = []
+
+    private func paste(_ shown: ClipItem, style: PasteStyle, keepOpen: Bool = false) {
         let item = store.full(shown)
         guard Paster.copy(item, style: style) else { NSSound.beep(); return }
+        if keepOpen, popover.isShown {
+            usedWhileOpen.append(item.id)
+            glyph.playTick(reduceMotion: reduceMotion)
+            Log.write("paste \(item.kind.rawValue) style=\(style) kept-open")
+            guard model.pasteDirectly, Paster.canPasteDirectly else { return }
+            // The panel keeps the keyboard, so send the paste to the app you were in, not to Memo.
+            let target = NSWorkspace.shared.frontmostApplication
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { Paster.pressPaste(to: target) }
+            return
+        }
         store.markUsed(item.id)
         reload()
         closePopover()
@@ -192,6 +207,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         guard model.pasteDirectly, Paster.canPasteDirectly else { return }
         // Let the popover close and the front app take the keys back, then press ⌘V.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { Paster.pressPaste() }
+    }
+
+    private func flushUsedWhileOpen() {
+        guard !usedWhileOpen.isEmpty else { return }
+        for id in usedWhileOpen { store.markUsed(id) }
+        usedWhileOpen.removeAll()
+        reload()
     }
 
     private func askPermission() {
@@ -246,7 +268,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     /// A quick re-open during the close animation keeps its fresh monitors.
-    func popoverDidClose(_ notification: Notification) { if !popover.isShown { removeMonitors() } }
+    func popoverDidClose(_ notification: Notification) { if !popover.isShown { removeMonitors(); flushUsedWhileOpen() } }
 
     private func removeMonitors() {
         if let m = clickMonitor { NSEvent.removeMonitor(m); clickMonitor = nil }
