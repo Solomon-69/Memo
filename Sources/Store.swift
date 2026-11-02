@@ -37,6 +37,7 @@ struct ClipItem: Identifiable, Equatable {
     var pinOrder = 0
     var bytes = 0
     var cleaned = false         // tracking parameters were removed from this link
+    var summary: String?        // short label made on this Mac (see Describer)
 }
 
 /// What the watcher hands to the store.
@@ -116,6 +117,10 @@ final class Store {
           hash TEXT NOT NULL UNIQUE)
         """)
         guard ok else { return false }
+        // Added later: older history files get the column on first launch (this fails harmlessly if it exists).
+        var hasSummary = false
+        query("PRAGMA table_info(items)") { if column($0, 1) == "summary" { hasSummary = true } }
+        if !hasSummary { exec("ALTER TABLE items ADD COLUMN summary TEXT") }
         // A quick integrity check catches a damaged file before it shows an empty list.
         var healthy = false
         query("PRAGMA quick_check") { stmt in healthy = (column(stmt, 0) == "ok") }
@@ -127,7 +132,7 @@ final class Store {
     func all() -> [ClipItem] {
         var out: [ClipItem] = []
         // The list only needs the start of each text; the full text is read when pasting.
-        query("SELECT id,kind,substr(text,1,4000),NULL,image,width,height,source,created,used,pinned,pin_order,bytes,cleaned FROM items ORDER BY used DESC") { s in
+        query("SELECT id,kind,substr(text,1,4000),NULL,image,width,height,source,created,used,pinned,pin_order,bytes,cleaned,summary FROM items ORDER BY used DESC") { s in
             guard let kind = ClipKind(rawValue: column(s, 1) ?? "") else { return }
             out.append(ClipItem(
                 id: sqlite3_column_int64(s, 0), kind: kind, text: column(s, 2) ?? "",
@@ -137,7 +142,8 @@ final class Store {
                 created: Date(timeIntervalSince1970: sqlite3_column_double(s, 8)),
                 used: Date(timeIntervalSince1970: sqlite3_column_double(s, 9)),
                 pinned: sqlite3_column_int(s, 10) != 0, pinOrder: Int(sqlite3_column_int(s, 11)),
-                bytes: Int(sqlite3_column_int(s, 12)), cleaned: sqlite3_column_int(s, 13) != 0))
+                bytes: Int(sqlite3_column_int(s, 12)), cleaned: sqlite3_column_int(s, 13) != 0,
+                summary: column(s, 14)))
         }
         return out
     }
@@ -178,6 +184,10 @@ final class Store {
                   clip.source as Any, now, now, bytes, clip.cleaned ? 1 : 0, hash])
         if !ok, let imageName { removeFiles(imageName) }
         return ok
+    }
+
+    func setSummary(_ id: Int64, _ summary: String) {
+        run("UPDATE items SET summary=? WHERE id=?", [summary, id])
     }
 
     /// The complete text and rich text of one item (the list holds a shortened copy).

@@ -25,7 +25,7 @@ fi
 # Test hook only in test builds (RELEASE=1 leaves it out).
 FLAGS=(-O); [ "${RELEASE:-0}" = "1" ] || FLAGS+=(-D TENAX_TEST)
 swiftc -O -parse-as-library -target "$TARGET" "${FLAGS[@]}" \
-  -framework AppKit -framework SwiftUI -framework ServiceManagement -framework Carbon -lsqlite3 \
+  -framework AppKit -framework SwiftUI -framework ServiceManagement -framework Carbon -framework Vision -lsqlite3 \
   "$REPO"/Sources/*.swift -o "$OUT/Memo"
 APP="$OUT/Memo.app"; rm -rf "$APP"; mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$REPO/Info.plist" "$APP/Contents/"; cp "$OUT/Memo" "$APP/Contents/MacOS/"

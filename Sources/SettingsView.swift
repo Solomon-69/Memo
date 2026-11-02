@@ -78,6 +78,12 @@ struct SettingsView: View {
                                subtitle: "Removes tracking bits like utm_source and fbclid") {
                         SmoothSwitch(isOn: model.cleanLinks, title: "Clean links", tint: accent) { model.cleanLinks = $0 }
                     }
+                    SettingRow(symbol: "sparkles", title: "Describe long items",
+                               subtitle: Describer.modelReady
+                                ? "Short labels for long text, links and pictures. Made on this Mac, nothing is sent anywhere"
+                                : "Needs Apple Intelligence, which this Mac does not have turned on") {
+                        SmoothSwitch(isOn: model.describeItems, title: "Describe long items", tint: accent) { model.describeItems = $0 }
+                    }
                     SettingRow(symbol: "pause.fill", title: "Pause recording",
                                subtitle: model.paused ? "Paused: nothing new is saved" : "Saving what you copy") {
                         SmoothSwitch(isOn: model.paused, title: "Pause recording", tint: accent) { model.paused = $0 }

@@ -469,6 +469,7 @@ enum ClipText {
     }
 
     static func title(_ item: ClipItem) -> String {
+        if let s = item.summary, !s.isEmpty, Describer.wantsLabel(item) { return s }
         switch item.kind {
         case .image: return "Image \(item.width) × \(item.height)"
         case .file:
@@ -494,6 +495,7 @@ enum ClipText {
             if lines > 1 { parts.append("\(lines) lines") }
         }
         if item.cleaned { parts.append("tracking removed") }
+        if item.kind == .image, item.width > 0 { parts.append("\(item.width) × \(item.height)") }
         if let s = item.source, !s.isEmpty { parts.append(s) }
         if withAge { parts.append(ago(item.used)) }
         return parts.joined(separator: " · ")

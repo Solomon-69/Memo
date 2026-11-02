@@ -9,6 +9,7 @@ enum Pref {
     static let maxMB = "maxMB"
     static let skipSecrets = "skipSecrets"
     static let cleanLinks = "cleanLinks"
+    static let describeItems = "describeItems"
     static let pasteDirectly = "pasteDirectly"
     static let paused = "paused"
     static let ignored = "ignoredApps"          // [bundle id]
@@ -43,6 +44,7 @@ final class TenaxModel: ObservableObject {
     @Published var maxMB: Int { didSet { save(maxMB, Pref.maxMB) } }
     @Published var skipSecrets: Bool { didSet { save(skipSecrets, Pref.skipSecrets) } }
     @Published var cleanLinks: Bool { didSet { save(cleanLinks, Pref.cleanLinks) } }
+    @Published var describeItems: Bool { didSet { save(describeItems, Pref.describeItems) } }
     @Published var pasteDirectly: Bool { didSet { save(pasteDirectly, Pref.pasteDirectly) } }
     @Published var paused: Bool { didSet { save(paused, Pref.paused) } }
     @Published var ignored: [IgnoredApp] { didSet { saveIgnored() } }
@@ -68,12 +70,13 @@ final class TenaxModel: ObservableObject {
     init() {
         let d = UserDefaults.standard
         d.register(defaults: [Pref.keepDays: 30, Pref.maxItems: 500, Pref.maxMB: 250, Pref.skipSecrets: true,
-                              Pref.cleanLinks: true, Pref.pasteDirectly: true, Pref.paused: false])
+                              Pref.cleanLinks: true, Pref.describeItems: true, Pref.pasteDirectly: true, Pref.paused: false])
         keepDays = d.integer(forKey: Pref.keepDays)
         maxItems = d.integer(forKey: Pref.maxItems)
         maxMB = d.integer(forKey: Pref.maxMB)
         skipSecrets = d.bool(forKey: Pref.skipSecrets)
         cleanLinks = d.bool(forKey: Pref.cleanLinks)
+        describeItems = d.bool(forKey: Pref.describeItems)
         pasteDirectly = d.bool(forKey: Pref.pasteDirectly)
         paused = d.bool(forKey: Pref.paused)
         accentIndex = d.integer(forKey: Pref.accent)

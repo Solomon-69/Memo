@@ -54,7 +54,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         // Storage health first: remove orphans, apply limits, then show the list.
         store.sweepOrphans()
         enforceLimits()
-        reload()
+        reload(); describePending()
         if let err = store.openError { model.errorText = err }
 
         watcher.settings = { [weak self] in
@@ -109,6 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             self.glyph.paused = self.model.paused
             self.enforceLimits()
             self.reload()
+            self.describePending()
         }
         model.onOpenSettings = { [weak self] in self?.openSettings() }
         model.onQuit = { [weak self] in self?.quit() }
@@ -127,8 +128,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         guard store.add(clip) else { return }
         enforceLimits()
         reload()
+        describePending()
         glyph.playTick(reduceMotion: reduceMotion)
         bounceIcon()
+    }
+
+    // MARK: Short labels (on this Mac, one at a time, newest first)
+
+    private var describing = false
+    private var triedLabels = Set<Int64>()
+
+    private func describePending() {
+        guard model.describeItems, !describing, Describer.modelReady,
+              let item = model.items.first(where: { $0.summary == nil && !triedLabels.contains($0.id) && Describer.wantsLabel($0) })
+        else { return }
+        describing = true
+        triedLabels.insert(item.id)
+        let text = store.full(item).text
+        let imageURL = item.image.map { store.imageURL($0) }
+        Task { @MainActor in
+            let label = await Describer.label(kind: item.kind, text: text, imageURL: imageURL)
+            if let label { store.setSummary(item.id, label); reload() }
+            describing = false
+            try? await Task.sleep(nanoseconds: 400_000_000)   // easy on the Mac: a short pause between labels
+            describePending()
+        }
     }
 
     private func enforceLimits() {
