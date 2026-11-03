@@ -43,7 +43,7 @@ enum Describer {
             case .image:
                 task = "Say what this picture shows, using the classifier results and any text read from it. If it has readable text, say what that text is about. Examples: 'Screenshot of a sales chart', 'Photo of a dog on a beach', 'Receipt from Tesco'."
             case .link:
-                task = "Name the website and what the page is about, guessed from the address. Examples: 'Apple App Store page for Luna Shift', 'YouTube video about sourdough', 'GitHub repo for Memo'."
+                task = "Name the website and what the page is about, guessed from the address. Examples: 'Apple App Store page for a notes app', 'YouTube video about sourdough', 'GitHub repo for Memo'."
             default:
                 task = "Say what the text is about or what it asks for. Examples: 'Request to review the sales report', 'Recipe for banana bread', 'Swift code for a login screen'."
             }

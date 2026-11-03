@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.3
+- Neutral example text in the on-device labeller prompt. Screenshots use made-up demo data.
+
 ## 1.5.2
 - The Allow button (panel and Settings) asks macOS and opens the Accessibility page right away (checked on macOS 27: Memo is listed there). Clearer wording.
 
