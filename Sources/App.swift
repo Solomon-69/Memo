@@ -27,7 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var reduceMotion: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        applyDockPolicy(UserDefaults.standard.bool(forKey: "showInDock"))
         if SMAppService.mainApp.status == .enabled { try? SMAppService.mainApp.register() }
         installMainMenu()
 
@@ -93,7 +93,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     // MARK: Model wiring
 
+    /// Dock icon on or off. Only changes the policy when it differs, and never takes focus.
+    private func applyDockPolicy(_ show: Bool) {
+        let policy: NSApplication.ActivationPolicy = show ? .regular : .accessory
+        if NSApp.activationPolicy() != policy { NSApp.setActivationPolicy(policy) }
+    }
+
     private func wireModel() {
+        model.onDock = { [weak self] show in self?.applyDockPolicy(show) }
         model.launchAtLogin = SMAppService.mainApp.status == .enabled
         model.onPaste = { [weak self] item, style in self?.paste(item, style: style) }
         model.onQuickPaste = { [weak self] item in self?.paste(item, style: .normal, keepOpen: true) }
@@ -465,6 +472,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             popover.appearance = look              // an open panel keeps its own look unless told
             settingsWindow?.appearance = look
             introWindow?.appearance = look
+        case "dock": model.showInDock = parts.count > 1 && parts[1] == "1"
+        case "reopen": _ = applicationShouldHandleReopen(NSApp, hasVisibleWindows: false)
+        case "policy":
+            let a = NSApp.activationPolicy()
+            try? "\(model.showInDock) \(a == .regular ? "regular" : a == .accessory ? "accessory" : "prohibited") \(popover.isShown)".write(toFile: "/tmp/memo-policy.txt", atomically: true, encoding: .utf8)
         case "quit": quit()
         default: break
         }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5
+- New Settings switch, Show in Dock: also keep Memo in the Dock and the app switcher. Off by default. Clicking the Dock icon opens your history.
+
 ## 1.4
 - Settings has a Check for updates / Update now row (Mac).
 - Settings: Up and Down arrow keys move a soft highlight through every setting (wraps); Left/Right or Space/Return change it; Esc closes. Mac and Windows.

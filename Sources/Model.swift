@@ -13,6 +13,7 @@ enum Pref {
     static let keepOpenAfterNumber = "keepOpenAfterNumber"
     static let pasteDirectly = "pasteDirectly"
     static let paused = "paused"
+    static let showInDock = "showInDock"
     static let ignored = "ignoredApps"          // [bundle id]
     static let accent = "accentIndex"           // index into accentChoices (0 = Navy)
 }
@@ -49,6 +50,8 @@ final class TenaxModel: ObservableObject {
     @Published var keepOpenAfterNumber: Bool { didSet { save(keepOpenAfterNumber, Pref.keepOpenAfterNumber) } }
     @Published var pasteDirectly: Bool { didSet { save(pasteDirectly, Pref.pasteDirectly) } }
     @Published var paused: Bool { didSet { save(paused, Pref.paused) } }
+    /// Off by default: Memo lives in the menu bar only. On adds it to the Dock and the app switcher too.
+    @Published var showInDock: Bool { didSet { save(showInDock, Pref.showInDock); onDock(showInDock) } }
     @Published var ignored: [IgnoredApp] { didSet { saveIgnored() } }
     @Published var accentIndex: Int { didSet { UserDefaults.standard.set(accentIndex, forKey: Pref.accent) } }
     @Published var launchAtLogin = false
@@ -67,6 +70,7 @@ final class TenaxModel: ObservableObject {
     var onOpenSettings: () -> Void = {}
     var onQuit: () -> Void = {}
     var onLogin: (Bool) -> Void = { _ in }
+    var onDock: (Bool) -> Void = { _ in }
     var onShortcut: (Shortcut?) -> Bool = { _ in true }
     var onClearHistory: () -> Void = {}
     var onAskPermission: () -> Void = {}
@@ -74,7 +78,7 @@ final class TenaxModel: ObservableObject {
     init() {
         let d = UserDefaults.standard
         d.register(defaults: [Pref.keepDays: 30, Pref.maxItems: 500, Pref.maxMB: 250, Pref.skipSecrets: true,
-                              Pref.cleanLinks: true, Pref.describeItems: true, Pref.keepOpenAfterNumber: true, Pref.pasteDirectly: true, Pref.paused: false])
+                              Pref.cleanLinks: true, Pref.describeItems: true, Pref.keepOpenAfterNumber: true, Pref.pasteDirectly: true, Pref.paused: false, Pref.showInDock: false])
         keepDays = d.integer(forKey: Pref.keepDays)
         maxItems = d.integer(forKey: Pref.maxItems)
         maxMB = d.integer(forKey: Pref.maxMB)
@@ -84,6 +88,7 @@ final class TenaxModel: ObservableObject {
         keepOpenAfterNumber = d.bool(forKey: Pref.keepOpenAfterNumber)
         pasteDirectly = d.bool(forKey: Pref.pasteDirectly)
         paused = d.bool(forKey: Pref.paused)
+        showInDock = d.bool(forKey: Pref.showInDock)
         accentIndex = d.integer(forKey: Pref.accent)
         let raw = d.array(forKey: Pref.ignored) as? [[String: String]] ?? []
         ignored = raw.compactMap { r in r["bundle"].map { IgnoredApp(bundle: $0, name: r["name"] ?? $0) } }

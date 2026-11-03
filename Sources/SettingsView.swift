@@ -38,6 +38,11 @@ struct SettingsView: View {
                         }
                     }
                     .nav("login", step: { _ in toggleLogin() }, activate: toggleLogin)
+                    SettingRow(symbol: "dock.rectangle", title: "Show in Dock",
+                               subtitle: "Also keep Memo in the Dock and the app switcher") {
+                        SmoothSwitch(isOn: model.showInDock, title: "Show in Dock", tint: accent) { model.showInDock = $0 }
+                    }
+                    .nav("dock", step: { _ in model.showInDock.toggle() }, activate: { model.showInDock.toggle() })
                     SettingRow(symbol: "arrow.down.doc", title: "Paste straight into the app",
                                subtitle: model.accessibilityOK ? "Allowed" : "Needs your OK in Privacy & Security") {
                         HStack(spacing: 8) {
