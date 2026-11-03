@@ -226,8 +226,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private func askPermission() {
         Paster.askForPermission()   // adds Memo to the Accessibility list and shows macOS's own request
         model.permissionStale = Paster.grantWentStale
-        if !Paster.canPasteDirectly {   // and take them to the right pane, where the switch for Memo is
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { NSWorkspace.shared.open(Paster.accessibilityPane) }
+        if !Paster.canPasteDirectly {   // and take them to the right pane (called Device Control and Data Access on macOS 26+), where Memo's switch is
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { NSWorkspace.shared.open(Paster.accessibilityPane) }
         }
         permissionPoll?.invalidate()
         var tries = 0

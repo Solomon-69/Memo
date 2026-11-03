@@ -44,7 +44,7 @@ struct SettingsView: View {
                     }
                     .nav("dock", step: { _ in model.showInDock.toggle() }, activate: { model.showInDock.toggle() })
                     SettingRow(symbol: "arrow.down.doc", title: "Paste straight into the app",
-                               subtitle: model.accessibilityOK ? "Allowed" : (model.permissionStale ? "macOS forgot Memo: remove it in Accessibility, then add it again" : "Needs your OK in Privacy & Security")) {
+                               subtitle: model.accessibilityOK ? "Allowed" : (model.permissionStale ? "macOS forgot Memo: remove it in Accessibility, then add it again" : "Allow Memo under Accessibility so it can paste for you.")) {
                         HStack(spacing: 8) {
                             if model.pasteDirectly && !model.accessibilityOK {
                                 Button("Allow") { model.onAskPermission() }.buttonStyle(PillButtonStyle())

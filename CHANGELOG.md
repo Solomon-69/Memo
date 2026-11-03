@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.2
+- The Allow button (panel and Settings) asks macOS and opens the Accessibility page right away (checked on macOS 27: Memo is listed there). Clearer wording.
+
 ## 1.5.1
 - Allow pasting: the button now asks macOS and opens Accessibility, where Memo is listed. If macOS forgot Memo after an update, the panel says to remove it with the minus and add it again.
 - Removed the three-dot button on rows (right-click a row for the same choices).

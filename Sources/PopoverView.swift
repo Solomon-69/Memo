@@ -110,8 +110,8 @@ struct PopoverView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("Allow pasting into apps").font(.system(size: 12, weight: .medium))
                 Text(model.permissionStale
-                     ? "macOS forgot Memo after an update. In Accessibility, select Memo, press the minus, then the plus to add it again."
-                     : "Until then Memo copies, and you press ⌘V.")
+                     ? "macOS forgot Memo after an update. Under Accessibility, select Memo, press the minus, then the plus to add it again."
+                     : "Allow Memo under Accessibility so it can paste for you.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
