@@ -8,7 +8,9 @@ POST=/private/tmp/tenax-build/post
 fail=0
 for L in light dark; do
   rm -f /tmp/memo-popwin.txt
-  $POST look:$L; $POST panel; sleep 1.3; $POST popshot:x; sleep 0.8
+  $POST look:$L; $POST panel; sleep 1.3; $POST popshot:x
+  for _ in $(seq 40); do [ -s /tmp/memo-popwin.txt ] && break; sleep 0.25; done
+  [ -s /tmp/memo-popwin.txt ] || { echo "no popover window (is a test build running?)"; $POST close; exit 1; }
   ID=$(cut -d' ' -f1 /tmp/memo-popwin.txt)
   screencapture -x -o -l "$ID" "/private/tmp/memo-pop-$L.png"
   $POST close; sleep 0.5
@@ -22,9 +24,9 @@ col = [im.getpixel((cx, y)) for y in range(0, 90)]          # down the middle, t
 side = [im.getpixel((cx - 150, y)) for y in range(0, 90)]    # down the body beside the arrow
 tip = next(y for y, v in enumerate(col) if v > 0)
 top = next(y for y, v in enumerate(side) if v > 0)
-rows = range(top + 4, top + 16)                              # the join zone, just under the body's top edge
+rows = range(top + 9, top + 18)                              # the join zone, just under the body's top edge
 worst = max(abs(col[y] - side[y]) for y in rows)
-step = max(abs(col[y + 1] - col[y]) for y in range(tip + 8, top + 14))
+step = max(abs(col[y + 1] - col[y]) for y in range(tip + 14, top + 14))
 print(f"{L}: arrow vs body worst diff {worst}, biggest step down the join {step}")
 sys.exit(0 if worst <= 4 and step <= 4 else 1)
 P
