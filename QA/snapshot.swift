@@ -16,17 +16,17 @@ enum Snap {
             ClipItem(id: id, kind: k, text: t, html: nil, image: nil, width: w, height: h, source: src,
                      created: now.addingTimeInterval(-ago), used: now.addingTimeInterval(-ago),
                      pinned: pinned, pinOrder: order, bytes: 100, cleaned: cleaned,
-                     summary: id == 2 ? "Partnership details: free year, weekly posting, App Store link" : id == 4 ? "Screenshot of a long chat log about the Memo app" : nil)
+                     summary: id == 2 ? "Note about the new Monday schedule and room bookings" : id == 4 ? "Screenshot of a sales chart" : nil)
         }
         let sample: [ClipItem] = [
-            item(1, .text, "hello@lunashift.app", ago: 9000, pinned: true, order: 0, src: "Mail"),
-            item(2, .text, "Thanks so much for getting back to me about the partnership, here are the details.\n\nThe app is live on the App Store this week. You get a free year, and your followers get a 7-day trial through your own link.\n\nPosting once a week is all we ask. Tell me which days suit you and I will send the links and a short guide.\n\nSpeak soon,\nSolomon", ago: 4000, pinned: true, order: 1, src: "Notes"),
-            item(3, .link, "https://apps.apple.com/app/luna-shift/id6809570772", ago: 20, cleaned: true),
+            item(1, .text, "meeting notes", ago: 9000, pinned: true, order: 0, src: "Notes"),
+            item(2, .text, "Quick note for the team.\n\nThe new schedule starts on Monday. Please check the shared calendar and tell me if any times clash.\n\nI will confirm the room bookings by Friday. Thank you all.", ago: 4000, pinned: true, order: 1, src: "Notes"),
+            item(3, .link, "https://example.com/recipes", ago: 20, cleaned: true),
             item(4, .image, "", ago: 140, src: "Google Chrome", w: 2940, h: 1912),
             item(5, .color, "#2DD4BF", ago: 600, src: "Figma"),
-            item(6, .file, "/Users/you/Desktop/Report.pdf\n/Users/you/Desktop/Notes.txt", ago: 3700, src: "Finder"),
-            item(7, .text, "line one\nline two\nline three", ago: 90_000, src: "Terminal"),
-            item(8, .text, "A very long piece of copied text that should never overflow the row or push the number badge off the edge of the panel at all", ago: 200_000, src: "Claude"),
+            item(6, .file, "/Users/demo/Documents/Report.pdf\n/Users/demo/Documents/Notes.txt", ago: 3700, src: "Finder"),
+            item(7, .text, "Order #1042 shipped", ago: 90_000, src: "Mail"),
+            item(8, .text, "A very long piece of copied text that should never overflow the row or push the number badge off the edge of the panel at all", ago: 200_000, src: "Notes"),
             item(9, .link, "https://example.com/page?id=5", ago: 300_000),
             item(10, .text, "Tenth item to show no number badge", ago: 400_000, src: nil),
         ]
@@ -60,7 +60,7 @@ enum Snap {
                 let im = TenaxModel(); im.accessibilityOK = p == 2
                 shoot("intro-\(p + 1)", IntroView(model: im, finish: { _ in }, page: p), dark: dark, settle: 1.6)
             }
-            let s = TenaxModel(); s.paused = false; s.items = sample; s.query = "lun"; s.accessibilityOK = true
+            let s = TenaxModel(); s.paused = false; s.items = sample; s.query = "rec"; s.accessibilityOK = true
             shoot("search", PopoverView(model: s), dark: dark)
             let e = TenaxModel(); e.items = []; e.paused = true; e.accessibilityOK = false; e.permissionStale = true; e.pasteDirectly = true
             shoot("empty-paused", PopoverView(model: e), dark: dark)
