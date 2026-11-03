@@ -436,6 +436,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             }
             try? lines.joined(separator: "\n").write(toFile: "/tmp/memo-noxhit.txt", atomically: true, encoding: .utf8)
         case "close": closePopover()
+        case "popshot":   // popwin: writes the popover window number + frame so a shell can take a silent picture
+            if let w = popover.contentViewController?.view.window {
+                try? "\(w.windowNumber) \(NSStringFromRect(w.frame))".write(toFile: "/tmp/memo-popwin.txt", atomically: true, encoding: .utf8)
+            }
         case "settings": openSettings()
         case "closesettings": settingsWindow?.close()
         case "intro": showIntro(page: Int(parts.count > 1 ? parts[1] : "") ?? 0)
