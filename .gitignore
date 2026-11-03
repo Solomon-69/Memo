@@ -10,3 +10,4 @@ windows/bin/
 windows/obj/
 out/
 .base-ast/
+dist/

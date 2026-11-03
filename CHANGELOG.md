@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4
+- Settings has a Check for updates / Update now row (Mac).
+- Settings: Up and Down arrow keys move a soft highlight through every setting (wraps); Left/Right or Space/Return change it; Esc closes. Mac and Windows.
+- Press ⌘1–9 to paste and Memo stays open so you can paste several items in a row (Settings switch).
+
 ## 1.3
 - Short labels for long text, links and pictures, made on your Mac (Apple on-device model and Vision), with a Settings switch.
 - Row buttons stay in place and only fade, so rows no longer jiggle when you hover; the age is never cut off; row details wrap.

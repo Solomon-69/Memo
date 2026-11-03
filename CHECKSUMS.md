@@ -1,10 +1,11 @@
 # Download checksums (SHA-256)
 
-Fingerprints of the current release downloads (Memo 1.2). If a file you downloaded gives a different fingerprint, do not open it.
+Fingerprints of the current release downloads (Memo 1.4). If a file you downloaded gives a different fingerprint, do not open it.
 
 ```
-6f4f832f4d2cf466cd045c4945146e9b18345b42246f8b37935ceb525b93ec04  Memo-mac.zip
-f6d030c5d0f2d7ce5cdb2b7c93a5d31724f0798c994c4dcb06363cb2ce8b02fa  Memo-windows.zip
+754187cea7516006e6a00af9ebbe60fc1c9fae026776fc88410c6aa2a1298820  Memo.dmg
+57f9b56d993f9a64f79b29b99ec1dc11a5146bafbf877548b4b4a1e10685e3e0  Memo-mac.zip
+0f40bf4877777a00e3249091eb4bf3fbf108a7ca29fe9063b090c6f070ab7e2d  Memo-windows.zip
 ```
 
 Check on Mac: `shasum -a 256 <file>`. Check on Windows: `certutil -hashfile <file> SHA256`.
