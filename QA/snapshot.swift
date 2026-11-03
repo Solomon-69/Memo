@@ -62,7 +62,7 @@ enum Snap {
             }
             let s = TenaxModel(); s.paused = false; s.items = sample; s.query = "lun"; s.accessibilityOK = true
             shoot("search", PopoverView(model: s), dark: dark)
-            let e = TenaxModel(); e.items = []; e.paused = true; e.accessibilityOK = false; e.pasteDirectly = true
+            let e = TenaxModel(); e.items = []; e.paused = true; e.accessibilityOK = false; e.permissionStale = true; e.pasteDirectly = true
             shoot("empty-paused", PopoverView(model: e), dark: dark)
             let st = TenaxModel(); st.paused = false; st.storageText = "12.4 MB"; st.accessibilityOK = false
             st.ignored = [IgnoredApp(bundle: "com.apple.Safari", name: "Safari")]

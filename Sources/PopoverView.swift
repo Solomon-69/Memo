@@ -109,10 +109,15 @@ struct PopoverView: View {
             IconTile(symbol: "hand.raised.fill", size: 22)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Allow pasting into apps").font(.system(size: 12, weight: .medium))
-                Text("Until then Memo copies, and you press ⌘V.").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text(model.permissionStale
+                     ? "macOS forgot Memo after an update. In Accessibility, select Memo, press the minus, then the plus to add it again."
+                     : "Until then Memo copies, and you press ⌘V.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            Spacer()
-            Button("Allow…") { model.onAskPermission() }.buttonStyle(PillButtonStyle())
+            Spacer(minLength: 4)
+            Button(model.permissionStale ? "Open Settings" : "Allow") { model.onAskPermission() }
+                .buttonStyle(PillButtonStyle()).fixedSize()
         }
         .padding(8)
         .cardStyle()
@@ -263,7 +268,6 @@ struct ClipRow: View {
             HStack(spacing: 0) {   // all four buttons always show, so nothing moves on hover
                 copyButton
                 pinButton
-                moreMenu
                 expandButton
             }
             if let number {
@@ -340,16 +344,6 @@ struct ClipRow: View {
         Button(expanded ? "Show less" : "Show everything") { model.toggleExpand(item.id) }
         Button(item.pinned ? "Unpin" : "Pin to top") { model.onPin(item) }
         Button("Delete") { model.onDelete(item) }
-    }
-
-    private var moreMenu: some View {
-        Menu { menuItems } label: {
-            Image(systemName: "ellipsis").font(.system(size: 11, weight: .semibold)).foregroundStyle(.secondary)
-        }
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .fixedSize()
-        .help("More ways to paste")
     }
 
     @ViewBuilder private var tile: some View {

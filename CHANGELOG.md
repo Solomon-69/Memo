@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+- Allow pasting: the button now asks macOS and opens Accessibility, where Memo is listed. If macOS forgot Memo after an update, the panel says to remove it with the minus and add it again.
+- Removed the three-dot button on rows (right-click a row for the same choices).
+
 ## 1.5
 - New Settings switch, Show in Dock: also keep Memo in the Dock and the app switcher. Off by default. Clicking the Dock icon opens your history.
 

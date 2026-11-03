@@ -37,6 +37,8 @@ final class TenaxModel: ObservableObject {
     @Published private(set) var expandedText = ""
     var mouseAtOpen = NSPoint.zero
     @Published var accessibilityOK = Paster.canPasteDirectly
+    /// Memo was allowed before, but macOS dropped it: the old entry has to be removed and added again.
+    @Published var permissionStale = Paster.grantWentStale
     @Published var storageText = ""
     @Published var errorText: String?
 

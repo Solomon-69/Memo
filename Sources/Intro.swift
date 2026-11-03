@@ -140,7 +140,7 @@ struct IntroView: View {
                 }
                 Spacer()
                 if !model.accessibilityOK {
-                    Button("Allow…") { model.onAskPermission() }.buttonStyle(PillButtonStyle())
+                    Button("Allow") { model.onAskPermission() }.buttonStyle(PillButtonStyle())
                         .transition(.scale.combined(with: .opacity))
                 }
             }

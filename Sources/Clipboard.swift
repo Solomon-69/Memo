@@ -144,7 +144,16 @@ enum Paster {
         return ok
     }
 
-    static var canPasteDirectly: Bool { AXIsProcessTrusted() }
+    static var canPasteDirectly: Bool {
+        let ok = AXIsProcessTrusted()
+        if ok { UserDefaults.standard.set(true, forKey: "axWasGranted") }
+        return ok
+    }
+
+    /// True when Memo was allowed before but macOS no longer trusts it (a new signature drops the old entry).
+    static var grantWentStale: Bool { !AXIsProcessTrusted() && UserDefaults.standard.bool(forKey: "axWasGranted") }
+
+    static let accessibilityPane = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
 
     /// Shows the system "allow Memo to control your computer" request (Solomon clicks Allow).
     static func askForPermission() {

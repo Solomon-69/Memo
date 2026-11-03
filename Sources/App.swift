@@ -224,13 +224,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     private func askPermission() {
-        Paster.askForPermission()
+        Paster.askForPermission()   // adds Memo to the Accessibility list and shows macOS's own request
+        model.permissionStale = Paster.grantWentStale
+        if !Paster.canPasteDirectly {   // and take them to the right pane, where the switch for Memo is
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { NSWorkspace.shared.open(Paster.accessibilityPane) }
+        }
         permissionPoll?.invalidate()
         var tries = 0
         permissionPoll = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] t in
             tries += 1
             let ok = Paster.canPasteDirectly
             self?.model.accessibilityOK = ok
+            if ok { self?.model.permissionStale = false }
             if ok || tries > 120 { t.invalidate() }
         }
     }
@@ -245,6 +250,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         guard let button = statusItem.button else { return }
         removeMonitors()
         model.accessibilityOK = Paster.canPasteDirectly
+        model.permissionStale = Paster.grantWentStale
         model.query = ""
         model.collapse()
         model.selectedID = model.visible.first?.id
