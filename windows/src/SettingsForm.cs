@@ -12,6 +12,12 @@ internal sealed class SettingsForm : Form
     private readonly ListBox ignored = new();
     private readonly List<Label> heads = new(), subs = new();
     private int y;
+    // Arrow-key walk: Up/Down moves a soft highlight row to row (wrapping), Left/Right or Space/Return changes it.
+    private readonly List<(Control Row, Action<int> Step, Action Activate)> navRows = new();
+    private readonly Panel band = new() { Visible = false };
+    private readonly System.Windows.Forms.Timer glide = new() { Interval = 15 };
+    private RectangleF bandNow, bandTo;
+    private int navIndex = -1;
     private bool loading = true;
 
     public SettingsForm(Settings settings, Store store, Theme theme)
@@ -31,6 +37,8 @@ internal sealed class SettingsForm : Form
         Font = Draw.UiFont(9.5f);
         ClientSize = new Size(Dp(440), Dp(620));
         Controls.Add(scroll);
+        scroll.Controls.Add(band);
+        glide.Tick += (_, _) => GlideBand();
         y = Dp(16);
 
         // ---- Look ----
@@ -39,6 +47,7 @@ internal sealed class SettingsForm : Form
         swatches = new SwatchStrip(settings, theme) { Location = new Point(Dp(20), y), Size = new Size(Dp(390), Dp(34)) };
         swatches.Picked += i => { settings.AccentIndex = i; settings.Save(); };
         scroll.Controls.Add(swatches);
+        Nav(swatches, d => PickSwatch(d), () => PickSwatch(1));
         y += Dp(46);
         Sub("Appearance");
         var look = Combo(new[] { "Follow Windows", "Light", "Dark" }, settings.Appearance == "light" ? 1 : settings.Appearance == "dark" ? 2 : 0);
@@ -62,6 +71,7 @@ internal sealed class SettingsForm : Form
         y += Dp(28);
         var clear = Btn("Clear history (pinned items stay)", Dp(250));
         clear.Click += (_, _) => { store.ClearUnpinned(); RefreshUsage(); };
+        Nav(clear, _ => { }, () => clear.PerformClick());
 
         // ---- Privacy ----
         Head("Privacy");
@@ -104,6 +114,74 @@ internal sealed class SettingsForm : Form
         loading = false;
     }
 
+    // ---------- Arrow-key navigation ----------
+
+    private void Nav(Control row, Action<int> step, Action activate) => navRows.Add((row, step, activate));
+
+    private void PickSwatch(int d)
+    {
+        var n = (settings.AccentIndex + d + Settings.Accents.Length) % Settings.Accents.Length;
+        settings.AccentIndex = n;
+        settings.Save();
+        swatches.Invalidate();
+    }
+
+    /// <summary>True when the key was used. Typing in the ignore box and open drop-downs keep their own keys.</summary>
+    internal bool NavKey(Keys key)
+    {
+        if (ActiveControl is TextBox || (ActiveControl is ComboBox { DroppedDown: true })) return false;
+        switch (key)
+        {
+            case Keys.Up: MoveNav(-1); return true;
+            case Keys.Down: MoveNav(1); return true;
+            case Keys.Left: if (navIndex >= 0) navRows[navIndex].Step(-1); return true;
+            case Keys.Right: if (navIndex >= 0) navRows[navIndex].Step(1); return true;
+            case Keys.Space:
+            case Keys.Return: if (navIndex >= 0) navRows[navIndex].Activate(); return true;
+            case Keys.Escape: Close(); return true;
+            default: return false;
+        }
+    }
+
+    internal int NavIndex => navIndex;
+
+    private void MoveNav(int d)
+    {
+        if (navRows.Count == 0) return;
+        navIndex = navIndex < 0 ? (d > 0 ? 0 : navRows.Count - 1) : (navIndex + d + navRows.Count) % navRows.Count;
+        var row = navRows[navIndex].Row;
+        scroll.ScrollControlIntoView(row);
+        bandTo = new RectangleF(Dp(10), row.Top - Dp(5), scroll.ClientSize.Width - Dp(20), row.Height + Dp(10));
+        if (!band.Visible) { bandNow = bandTo; ApplyBand(); band.Visible = true; band.SendToBack(); }
+        glide.Start();
+    }
+
+    /// <summary>The pill eases toward the chosen row: a little over a tenth of a second, no overshoot.</summary>
+    private void GlideBand()
+    {
+        bandTo = new RectangleF(bandTo.X, navRows[navIndex].Row.Top - Dp(5), bandTo.Width, navRows[navIndex].Row.Height + Dp(10));
+        const float k = 0.3f;
+        bandNow = new RectangleF(bandNow.X + (bandTo.X - bandNow.X) * k, bandNow.Y + (bandTo.Y - bandNow.Y) * k,
+                                 bandNow.Width + (bandTo.Width - bandNow.Width) * k, bandNow.Height + (bandTo.Height - bandNow.Height) * k);
+        if (Math.Abs(bandTo.Y - bandNow.Y) < 0.6f && Math.Abs(bandTo.Height - bandNow.Height) < 0.6f) { bandNow = bandTo; glide.Stop(); }
+        ApplyBand();
+    }
+
+    private void ApplyBand()
+    {
+        band.Bounds = Rectangle.Round(bandNow);
+        var p = theme.Palette;
+        var a = theme.EffectiveDark ? Settings.Accents[settings.AccentIndex].Dark : Settings.Accents[settings.AccentIndex].Light;
+        int Mix(int back, int top) => (int)Math.Round(back + (top - back) * 0.2);
+        band.BackColor = Color.FromArgb(Mix(p.Back.R, a.R), Mix(p.Back.G, a.G), Mix(p.Back.B, a.B));
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if ((keyData & (Keys.Control | Keys.Alt)) == 0 && NavKey(keyData & Keys.KeyCode)) return true;
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
     private int Dp(int v) => (int)Math.Round(v * DeviceDpi / 96f);
 
     private void OnThemeChanged() { if (!IsDisposed) BeginInvoke(ApplyColors); }
@@ -133,6 +211,7 @@ internal sealed class SettingsForm : Form
         c.Items.AddRange(items);
         c.SelectedIndex = Math.Clamp(selected, 0, items.Length - 1);
         scroll.Controls.Add(c);
+        Nav(c, d => c.SelectedIndex = (c.SelectedIndex + d + c.Items.Count) % c.Items.Count, () => c.SelectedIndex = (c.SelectedIndex + 1) % c.Items.Count);
         y += Dp(38);
         return c;
     }
@@ -142,6 +221,7 @@ internal sealed class SettingsForm : Form
         var c = new CheckBox { Text = text, Checked = value, AutoSize = true, Location = new Point(Dp(20), y) };
         c.CheckedChanged += (_, _) => { if (!loading) set(c.Checked); };
         scroll.Controls.Add(c);
+        Nav(c, _ => c.Checked = !c.Checked, () => c.Checked = !c.Checked);
         y += Dp(30);
     }
 
@@ -153,6 +233,7 @@ internal sealed class SettingsForm : Form
         var n = new NumericUpDown { Minimum = min, Maximum = max, Value = Math.Clamp(value, min, max), Location = new Point(Dp(260), y), Width = Dp(90), BorderStyle = BorderStyle.FixedSingle };
         n.ValueChanged += (_, _) => { if (loading) return; set((int)n.Value); settings.Save(); RefreshUsage(); };
         scroll.Controls.Add(n);
+        Nav(n, d => n.Value = Math.Clamp(n.Value + d, n.Minimum, n.Maximum), () => n.Value = Math.Clamp(n.Value + 1, n.Minimum, n.Maximum));
         y += Dp(34);
     }
 
@@ -198,6 +279,7 @@ internal sealed class SettingsForm : Form
             }
         }
         swatches.Invalidate();
+        if (band.Visible) ApplyBand();
     }
 
     protected override void OnHandleCreated(EventArgs e)

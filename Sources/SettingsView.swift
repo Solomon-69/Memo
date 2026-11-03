@@ -6,9 +6,13 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @ObservedObject var model: TenaxModel
     @State private var confirmClear = false
+    @StateObject private var nav = SettingsNav()
+    @State private var navFrames: [String: CGRect] = [:]
+    @StateObject private var updater = AppUpdater(UpdateConfig(repo: "Solomon-69/Memo", appName: "Memo", bundleName: "Memo.app", zipName: "Memo-mac.zip"))
     private var accent: Color { accentChoice(model.accentIndex).color }
 
     var body: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 header
@@ -17,12 +21,15 @@ struct SettingsView: View {
                                subtitle: accentChoice(model.accentIndex).name) {
                         AccentDots(selected: model.accentIndex) { model.accentIndex = $0 }
                     }
+                    .nav("accent", step: { d in model.accentIndex = (model.accentIndex + d + accentChoices.count) % accentChoices.count },
+                         activate: { model.accentIndex = (model.accentIndex + 1) % accentChoices.count })
                 }
                 group("General") {
                     SettingRow(symbol: "command", title: "Open Memo",
                                subtitle: model.shortcutProblem ?? "Press this anywhere to open your history") {
                         ShortcutRecorder(model: model)
                     }
+                    .nav("shortcut", activate: { NotificationCenter.default.post(name: .memoStartRecording, object: nil) })
                     SettingRow(symbol: "power", title: "Open at login",
                                subtitle: "Start Memo when your Mac starts") {
                         SmoothSwitch(isOn: model.launchAtLogin, title: "Open at login", tint: accent) { want in
@@ -30,6 +37,7 @@ struct SettingsView: View {
                             DispatchQueue.main.async { model.onLogin(want) }
                         }
                     }
+                    .nav("login", step: { _ in toggleLogin() }, activate: toggleLogin)
                     SettingRow(symbol: "arrow.down.doc", title: "Paste straight into the app",
                                subtitle: model.accessibilityOK ? "Allowed" : "Needs your OK in Privacy & Security") {
                         HStack(spacing: 8) {
@@ -41,6 +49,7 @@ struct SettingsView: View {
                             }
                         }
                     }
+                    .nav("paste", step: { _ in model.pasteDirectly.toggle() }, activate: { model.pasteDirectly.toggle() })
                 }
                 group("Share") { MemoShareRow() }
                 group("History") {
@@ -51,12 +60,16 @@ struct SettingsView: View {
                                        label: { $0 == 0 ? "Forever" : ($0 == 1 ? "1 day" : "\($0) days") },
                                        short: { $0 == 0 ? "∞" : "\($0)" }) { model.keepDays = $0 }
                     }
+                    .nav("days", step: { drumStep(Array([0] + Array(1...365)), model.keepDays, $0) { model.keepDays = $0 } },
+                         activate: { drumNext([1, 7, 30, 90, 365, 0], model.keepDays) { model.keepDays = $0 } })
                     pickerCard(symbol: "list.number", title: "Keep at most",
                                subtitle: "The oldest go first when the list is full.") {
                         NumberChipDrum(title: "Items", value: model.maxItems, values: Array(stride(from: 50, through: 5000, by: 50)),
                                        presets: [100, 250, 500, 1000, 2500, 5000], tint: accent,
                                        label: { "\($0) items" }, short: { "\($0)" }) { model.maxItems = $0 }
                     }
+                    .nav("items", step: { drumStep(Array(stride(from: 50, through: 5000, by: 50)), model.maxItems, $0) { model.maxItems = $0 } },
+                         activate: { drumNext([100, 250, 500, 1000, 2500, 5000], model.maxItems) { model.maxItems = $0 } })
                     pickerCard(symbol: "externaldrive", title: "Size limit",
                                subtitle: "History never grows past this.") {
                         NumberChipDrum(title: "Limit", value: model.maxMB, values: Array(stride(from: 50, through: 2000, by: 50)),
@@ -64,42 +77,75 @@ struct SettingsView: View {
                                        label: { $0 >= 1000 && $0 % 1000 == 0 ? "\($0 / 1000) GB" : "\($0) MB" },
                                        short: { "\($0)" }) { model.maxMB = $0 }
                     }
+                    .nav("size", step: { drumStep(Array(stride(from: 50, through: 2000, by: 50)), model.maxMB, $0) { model.maxMB = $0 } },
+                         activate: { drumNext([100, 250, 500, 1000], model.maxMB) { model.maxMB = $0 } })
                     SettingRow(symbol: "chart.pie", title: "History uses \(model.storageText)",
                                subtitle: "Stored only on this Mac") {
                         Button("Clear history…") { confirmClear = true }.buttonStyle(QuietButtonStyle())
                     }
+                    .nav("clear", activate: { confirmClear = true })
                 }
                 group("Privacy") {
                     SettingRow(symbol: "key.fill", title: "Skip passwords and secrets",
                                subtitle: "Ignores password managers and hidden clipboard items") {
                         SmoothSwitch(isOn: model.skipSecrets, title: "Skip passwords", tint: accent) { model.skipSecrets = $0 }
                     }
+                    .nav("secrets", step: { _ in model.skipSecrets.toggle() }, activate: { model.skipSecrets.toggle() })
                     SettingRow(symbol: "link", title: "Clean links",
                                subtitle: "Removes tracking bits like utm_source and fbclid") {
                         SmoothSwitch(isOn: model.cleanLinks, title: "Clean links", tint: accent) { model.cleanLinks = $0 }
                     }
+                    .nav("links", step: { _ in model.cleanLinks.toggle() }, activate: { model.cleanLinks.toggle() })
                     SettingRow(symbol: "command", title: "Keep open after ⌘1–9",
                                subtitle: "Paste several items in a row. Esc or a click outside closes it") {
                         SmoothSwitch(isOn: model.keepOpenAfterNumber, title: "Keep open after number shortcuts", tint: accent) { model.keepOpenAfterNumber = $0 }
                     }
+                    .nav("keepopen", step: { _ in model.keepOpenAfterNumber.toggle() }, activate: { model.keepOpenAfterNumber.toggle() })
                     SettingRow(symbol: "sparkles", title: "Describe long items",
                                subtitle: Describer.modelReady
                                 ? "Short labels for long text, links and pictures. Made on this Mac, nothing is sent anywhere"
                                 : "Needs Apple Intelligence, which this Mac does not have turned on") {
                         SmoothSwitch(isOn: model.describeItems, title: "Describe long items", tint: accent) { model.describeItems = $0 }
                     }
+                    .nav("describe", step: { _ in model.describeItems.toggle() }, activate: { model.describeItems.toggle() })
                     SettingRow(symbol: "pause.fill", title: "Pause recording",
                                subtitle: model.paused ? "Paused: nothing new is saved" : "Saving what you copy") {
                         SmoothSwitch(isOn: model.paused, title: "Pause recording", tint: accent) { model.paused = $0 }
                     }
+                    .nav("pause", step: { _ in model.paused.toggle() }, activate: { model.paused.toggle() })
                     ignoredCard
+                        .nav("ignore", activate: chooseApp)
+                }
+                group("Updates") {
+                    UpdateRow(updater: updater, tint: accent, ink: .primary, mute: .secondary, track: Color.primary.opacity(0.08))
+                        .padding(12)
+                        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.primary.opacity(0.05)))
+                        .nav("updates", activate: {
+                            if case .available = updater.state { Task { await updater.install() } }
+                            else { Task { await updater.check() } }
+                        })
                 }
                 Text("Nothing you copy ever leaves this Mac.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity).padding(.top, 4)
             }
             .padding(18)
+            .coordinateSpace(name: "settingsContent")
+            .overlay(alignment: .topLeading) { navPill }
+            .onPreferenceChange(NavFramesKey.self) { navFrames = $0; nav.frames = $0 }
         }
+        #if TENAX_TEST
+        .onAppear {
+            // Off-screen look test: highlight a named row without a keyboard.
+            if let id = ProcessInfo.processInfo.environment["MEMO_TEST_NAV"] {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { nav.current = id }
+            }
+        }
+        #endif
+        .onAppear { nav.reveal = { id in withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("nav-\(id)") } } }
+        }
+        .background(NavKeys(nav: nav))
+        .environment(\.settingsNav, nav)
         .frame(width: 480, height: 640)
         .environment(\.tenaxAccent, accent)
         .tint(accent)
@@ -110,6 +156,43 @@ struct SettingsView: View {
         } message: {
             Text("Everything except pinned items is removed. This can't be undone.")
         }
+    }
+
+    /// The soft pill under the row the arrow keys are on; it glides from row to row.
+    @ViewBuilder private var navPill: some View {
+        if let c = nav.current, let f = navFrames[c] {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(accent.opacity(0.07))
+                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(accent.opacity(0.6), lineWidth: 1.5))
+                .frame(width: f.width + 8, height: f.height + 8)
+                .offset(x: f.minX - 4, y: f.minY - 4)
+                .animation(.spring(response: 0.34, dampingFraction: 0.84), value: f)
+                .animation(.spring(response: 0.34, dampingFraction: 0.84), value: c)
+                .allowsHitTesting(false)
+                .transition(.opacity)
+        }
+    }
+
+    private func toggleLogin() {
+        let want = !model.launchAtLogin
+        model.launchAtLogin = want
+        DispatchQueue.main.async { model.onLogin(want) }
+    }
+
+    /// Left/Right on a number row: one step along its values.
+    private func drumStep(_ values: [Int], _ cur: Int, _ d: Int, _ set: (Int) -> Void) {
+        let i = values.firstIndex(of: cur) ?? values.indices.min(by: { abs(values[$0] - cur) < abs(values[$1] - cur) }) ?? 0
+        let n = min(max(i + d, 0), values.count - 1)
+        guard n != i else { return }
+        DrumTick.play()
+        set(values[n])
+    }
+
+    /// Space/Return on a number row: the next preset chip.
+    private func drumNext(_ presets: [Int], _ cur: Int, _ set: (Int) -> Void) {
+        let i = presets.firstIndex(of: cur) ?? -1
+        DrumTick.play()
+        set(presets[(i + 1) % presets.count])
     }
 
     private var header: some View {
@@ -357,10 +440,12 @@ struct ShortcutRecorder: View {
         .animation(.spring(response: 0.28, dampingFraction: 0.82), value: recording)
         .help("Click, then press the shortcut you want")
         .onDisappear { stop() }
+        .onReceive(NotificationCenter.default.publisher(for: .memoStartRecording)) { _ in if !recording { start() } }
     }
 
     private func start() {
         recording = true
+        SettingsNav.recordingShortcut = true
         HotkeyCenter.shared.unregister()   // so pressing the old one doesn't open the panel
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { e in
             handle(e)
@@ -408,6 +493,7 @@ struct ShortcutRecorder: View {
         monitor = nil
         if let resign { NotificationCenter.default.removeObserver(resign) }
         resign = nil
+        SettingsNav.recordingShortcut = false
         if recording { recording = false; _ = model.onShortcut(model.shortcut) }
     }
 }

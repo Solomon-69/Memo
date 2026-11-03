@@ -58,6 +58,14 @@ internal sealed class SelfTest
             r["listCount"] = popup.List.Count;
             r["settingsVisible"] = ctx.SettingsWindow is { Visible: true };
             r["settingsBounds"] = ctx.SettingsWindow is { } s ? Box(s.Bounds) : null;
+            if (ctx.SettingsWindow is { } sw)
+            {
+                // Arrow-key walk: Down lands on the first row, Up wraps to the last, Down wraps back to the first.
+                sw.NavKey(Keys.Down); var first = sw.NavIndex;
+                sw.NavKey(Keys.Up); var wrapped = sw.NavIndex;
+                sw.NavKey(Keys.Down); var back = sw.NavIndex;
+                r["settingsNav"] = new { first, wrapped, back };
+            }
             r["introVisible"] = ctx.IntroWindow is { Visible: true };
             r["introBounds"] = ctx.IntroWindow is { } i ? Box(i.Bounds) : null;
             r["tray"] = ctx.TrayBounds() is { } t ? Box(t) : null;

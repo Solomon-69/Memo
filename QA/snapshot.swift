@@ -66,7 +66,7 @@ enum Snap {
             shoot("empty-paused", PopoverView(model: e), dark: dark)
             let st = TenaxModel(); st.paused = false; st.storageText = "12.4 MB"; st.accessibilityOK = false
             st.ignored = [IgnoredApp(bundle: "com.apple.Safari", name: "Safari")]
-            shoot("settings", SettingsView(model: st), dark: dark, size: NSSize(width: 480, height: 640))
+            shoot("settings", SettingsView(model: st), dark: dark, size: NSSize(width: 480, height: 640), settle: 1.0)
             let st2 = TenaxModel(); st2.paused = false; st2.storageText = "12.4 MB"
             shoot("settings-full", ScrollView { SettingsView(model: st2).frame(height: 1400) }.frame(width: 480, height: 1400), dark: dark, size: NSSize(width: 480, height: 1400))
         }
