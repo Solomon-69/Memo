@@ -155,6 +155,17 @@ enum Paster {
 
     static let accessibilityPane = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
 
+    /// Removes only Memo's own Accessibility entry (a stale one from an older signature), so the next request adds a working one.
+    static func clearOldPermission() {
+        guard let id = Bundle.main.bundleIdentifier else { return }
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/tccutil")
+        p.arguments = ["reset", "Accessibility", id]
+        p.standardOutput = FileHandle.nullDevice
+        p.standardError = FileHandle.nullDevice
+        do { try p.run(); p.waitUntilExit() } catch { NSLog("Memo: tccutil reset failed: \(error)") }
+    }
+
     /// Shows the system "allow Memo to control your computer" request (Solomon clicks Allow).
     static func askForPermission() {
         let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String

@@ -224,6 +224,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     private func askPermission() {
+        // A switch left on for an older Memo build no longer counts (macOS ties it to the old signature),
+        // and flipping it does nothing. Clear Memo's own old entry first so macOS adds a fresh one that works.
+        if !Paster.canPasteDirectly { Paster.clearOldPermission() }
         Paster.askForPermission()   // adds Memo to the Accessibility list and shows macOS's own request
         model.permissionStale = Paster.grantWentStale
         if !Paster.canPasteDirectly {   // and take them to the right pane (called Device Control and Data Access on macOS 26+), where Memo's switch is

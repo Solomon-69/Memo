@@ -109,14 +109,12 @@ struct PopoverView: View {
             IconTile(symbol: "hand.raised.fill", size: 22)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Allow pasting into apps").font(.system(size: 12, weight: .medium))
-                Text(model.permissionStale
-                     ? "macOS forgot Memo after an update. Under Accessibility, select Memo, press the minus, then the plus to add it again."
-                     : "Allow Memo under Accessibility so it can paste for you.")
+                Text("Press Allow, then turn Memo on in the list that opens. Then ⌘1 to ⌘9 paste into any app.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
-            Button(model.permissionStale ? "Open Settings" : "Allow") { model.onAskPermission() }
+            Button("Allow") { model.onAskPermission() }
                 .buttonStyle(PillButtonStyle()).fixedSize()
         }
         .padding(8)
