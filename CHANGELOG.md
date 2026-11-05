@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.5
+- Updates: the bar now follows the real download, then shows checking and installing, and a failed update says why.
+
 ## 1.5.4
 - Allow button now fixes paste shortcuts (⌘1 to ⌘9) when macOS kept an old, broken permission from an earlier Memo: it clears that entry and asks again, so you only turn Memo on once.
 - Local builds are signed the same way as releases, so the permission stays after updates.
