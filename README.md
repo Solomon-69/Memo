@@ -179,3 +179,5 @@ Screenshots of every screen, rendered off-screen in light and dark: `QA/snap.sh`
 ## Licence
 
 [MIT](LICENSE). Memo shares no code with Maccy.
+
+More free apps by Solomon: [Mac-Apps](https://solomon-69.github.io/Mac-Apps/)
