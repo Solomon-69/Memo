@@ -10,14 +10,16 @@
 **Everything you copy, one shortcut away.**
 
 <p>
-  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Version 1.3" src="https://img.shields.io/badge/version-1.3-3457c9?style=flat-square"></a>
+  <a href="https://github.com/Solomon-69/Memo/releases/latest"><img alt="Latest version" src="https://img.shields.io/github/v/release/Solomon-69/Memo?label=version&color=3457c9&style=flat-square"></a>
   <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-1f1d1a?style=flat-square&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-5b8a5a?style=flat-square"></a>
   <img alt="No data collected" src="https://img.shields.io/badge/data%20collected-none-3457c9?style=flat-square">
 </p>
 
 <p>
-  <a href="https://github.com/Solomon-69/Memo/releases/latest/download/Memo-mac.zip"><b>Download for Mac</b></a>
+  <a href="https://github.com/Solomon-69/Memo/releases/latest/download/Memo.dmg"><b>Download for Mac</b></a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://github.com/Solomon-69/Memo/releases/latest/download/Memo-mac.zip">Mac zip</a>
   &nbsp;&middot;&nbsp;
   <a href="#install">Install</a>
   &nbsp;&middot;&nbsp;
@@ -110,7 +112,7 @@ small tick each time something is copied.
 
 ## Install
 
-1. Download [Memo-mac.zip](https://github.com/Solomon-69/Memo/releases/latest/download/Memo-mac.zip) and double-click it.
+1. Download [Memo-mac.zip](https://github.com/Solomon-69/Memo/releases/latest/download/Memo-mac.zip) and double-click it. (Or the [disk image](https://github.com/Solomon-69/Memo/releases/latest/download/Memo.dmg), or one line in Terminal: `curl -fsSL https://solomon-69.github.io/Mac-Apps/download/install.sh | bash -s memo`.)
 2. Drag **Memo** into your **Applications** folder.
 3. The first time, right-click Memo and choose **Open**, then **Open** again. (Memo isn't notarised by Apple yet, so macOS asks once.)
 4. To paste straight into apps, Memo asks for **Accessibility** permission in System Settings > Privacy & Security. Without it, Memo copies the item and you press <kbd>⌘</kbd> <kbd>V</kbd> yourself.

@@ -27,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var reduceMotion: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        IconRefresh.onceForThisVersion()   // new icon shows after an update
         applyDockPolicy(UserDefaults.standard.bool(forKey: "showInDock"))
         if SMAppService.mainApp.status == .enabled { try? SMAppService.mainApp.register() }
         installMainMenu()
