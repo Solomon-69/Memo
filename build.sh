@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build.sh: compile Memo.app with swiftc (no Xcode project), sign, install to ~/Applications.
+# build.sh: compile Memo.app with swiftc (no Xcode project), sign, install to /Applications.
 #   ./build.sh               build + install + relaunch in the background
 #   ./build.sh --regen-icon  redraw the icon first
 set -euo pipefail
@@ -37,9 +37,6 @@ SIGN_ID="$(cat "$REPO/.signing" 2>/dev/null || true)"
   || codesign --force --deep --sign - "$APP"
 pkill -x Tenax 2>/dev/null || true
 pkill -x Memo 2>/dev/null || true
-mkdir -p ~/Applications
-rm -rf ~/Applications/Tenax.app   # the app's first name; its history moves over on first launch
-rm -rf ~/Applications/Memo.app; ditto "$APP" ~/Applications/Memo.app
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ~/Applications/Memo.app
-open -g ~/Applications/Memo.app
-echo "installed ~/Applications/Memo.app"
+H="$HOME/Desktop/Stuff 3/CLAUDE/Claude Code/Apps/shared/install_app.sh"   # one install folder for every app: /Applications
+# Tenax was the app's first name; its history moves over on first launch.
+if [ -x "$H" ]; then "$H" "$APP" Memo --open --also-remove Tenax; else rm -rf "$HOME/Applications/Memo.app" "/Applications/Memo.app"; ditto "$APP" "/Applications/Memo.app"; open -g "/Applications/Memo.app"; fi

@@ -11,6 +11,11 @@ let testNotification = Notification.Name("com.solomon.Tenax.test")
 #endif
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+    /// Opening the app only adds the menu bar icon. macOS can send a "reopen" right as the app starts
+    /// (login, relaunch after an update, a second launch while it starts), so reopens in the first
+    /// seconds are ignored: Settings and the panel only open when the person asks for them.
+    private let launchedAt = Date()
+    private var justLaunched: Bool { Date().timeIntervalSince(launchedAt) < 5 }
     private var statusItem: NSStatusItem!
     private let glyph = TenaxGlyphView()
     private let popover = NSPopover()
@@ -88,6 +93,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     /// Opening Memo again from Finder or Spotlight shows the panel.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if justLaunched { return false }
         if !popover.isShown { openPopover() }
         return false
     }
